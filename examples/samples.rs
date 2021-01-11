@@ -16,7 +16,7 @@ use tcod::noise::{Noise, NoiseType, DEFAULT_HURST, DEFAULT_LACUNARITY, MAX_OCTAV
 use tcod::image::{Image, blit_2x};
 use tcod::bsp::{Bsp, TraverseOrder};
 use rand::Rng;
-use rand::ThreadRng;
+use rand::rngs::ThreadRng;
 use std::char::from_u32;
 use std::fs::read_dir;
 use std::cmp::{min, max};
@@ -69,7 +69,7 @@ impl ColorsSample {
 
     fn cycle_colors(&mut self) {
         for c in 0..4 {
-            let component = self.rng.gen_range(0, 3);
+            let component = self.rng.gen_range(0..3);
             match component {
                 0 => {
                     let (n_c, n_d) = self.cycle_color_component(self.cols[c].r, self.dirr[c]);
@@ -138,7 +138,7 @@ impl ColorsSample {
                 let c = if y == 0 || y == SAMPLE_SCREEN_HEIGHT-1 {
                     '\u{00ff}'
                 } else {
-                    let r = self.rng.gen_range('a' as u32, 'z' as u32);
+                    let r = self.rng.gen_range(('a' as u32)..('z' as u32));
                     from_u32(r).unwrap()
                 };
 
@@ -546,7 +546,7 @@ impl Render for NoiseSample {
 
         if let Some((_, Event::Key(key))) = event {
             match key.printable {
-                '1'...'9' =>
+                '1'..='9' =>
                     self.func = {
                         let number = key.printable.to_digit(10).unwrap() as u8;
                         NoiseFunction::from_value(number - 1)
@@ -778,7 +778,7 @@ struct PathSample<'a> {
 }
 
 const TORCH_RADIUS : f32 = 10.0;
-const SQUARED_TORCH_RADIUS : f32 = (TORCH_RADIUS*TORCH_RADIUS);
+const SQUARED_TORCH_RADIUS : f32 = TORCH_RADIUS*TORCH_RADIUS;
 
 static SMAP : [&'static str; 20] = [
     "##############################################",
@@ -1019,7 +1019,7 @@ fn random_val(mut low: i32, high: i32) -> i32 {
     let mut rnd = rand::thread_rng();
 
     if low >= high { low -= 1 }
-    rnd.gen_range(low, high)
+    rnd.gen_range(low..high)
 }
 
 impl<'a> BspSample<'a> {
@@ -1622,7 +1622,7 @@ fn main() {
         print_samples(&mut root, cur_sample, &samples);
         print_help_message(&mut root);
 
-        let event = check_for_event(KEY_PRESS | MOUSE);
+        let event = check_for_event(EventFlags::KEY_PRESS | EventFlags::MOUSE);
         samples[cur_sample].render(&mut console, &root, event);
 
         blit(&console, (0, 0), (SAMPLE_SCREEN_WIDTH, SAMPLE_SCREEN_HEIGHT),

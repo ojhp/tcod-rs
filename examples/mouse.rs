@@ -1,6 +1,6 @@
 extern crate tcod;
 
-use tcod::input as input;
+use tcod::input::{self, EventFlags};
 use tcod::{Console, RootConsole, BackgroundFlag};
 
 fn main() {
@@ -15,7 +15,7 @@ fn main() {
     while !con.window_closed() {
 
         loop {
-            match input::check_for_event(input::KEY | input::MOUSE) {
+            match input::check_for_event(EventFlags::KEY | EventFlags::MOUSE) {
                 None => {
                     break;
                 }

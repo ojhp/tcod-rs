@@ -4,9 +4,9 @@ use rustc_serialize::{Encodable, Encoder, Decodable, Decoder};
 impl Encodable for Color {
     fn encode<S: Encoder>(&self, s: &mut S) -> Result<(), S::Error> {
         s.emit_struct("Color", 3, |s| {
-            try!{ s.emit_struct_field("r", 0, |s| self.r.encode(s)) };
-            try!{ s.emit_struct_field("g", 1, |s| self.g.encode(s)) };
-            try!{ s.emit_struct_field("b", 2, |s| self.b.encode(s)) };
+            s.emit_struct_field("r", 0, |s| self.r.encode(s))?;
+            s.emit_struct_field("g", 1, |s| self.g.encode(s))?;
+            s.emit_struct_field("b", 2, |s| self.b.encode(s))?;
             Ok(())
         })
     }
@@ -16,9 +16,9 @@ impl Encodable for Color {
 impl Decodable for Color {
     fn decode<D: Decoder>(d: &mut D) -> Result<Self, D::Error> {
         d.read_struct("Color", 3, |d| {
-            let r = try!(d.read_struct_field("r", 0, |d| d.read_u8()));
-            let g = try!(d.read_struct_field("g", 1, |d| d.read_u8()));
-            let b = try!(d.read_struct_field("b", 2, |d| d.read_u8()));
+            let r = d.read_struct_field("r", 0, |d| d.read_u8())?;
+            let g = d.read_struct_field("g", 1, |d| d.read_u8())?;
+            let b = d.read_struct_field("b", 2, |d| d.read_u8())?;
             Ok(Color{r: r, g: g, b: b})
         })
     }
